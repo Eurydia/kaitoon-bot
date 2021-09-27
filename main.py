@@ -1,7 +1,7 @@
 from os import getenv
 
 from bot import ChemistryBot
-from keep_alive import keep_alive
+# from keep_alive import keep_alive
 
 def main():
     #TODO: Error Message
