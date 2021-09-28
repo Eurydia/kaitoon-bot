@@ -16,10 +16,7 @@ class SimpleBalance(commands.Cog):
         ) -> None:
 
             try:
-                reac, prod = simple_balance(
-                    reactants=reactants,
-                    products=products
-                    )
+                reac, prod = simple_balance(reactants, products)
                 reac, prod = map(dict, (reac, prod))
             except ValueError as e:
                 formatted_str = format_reaction(
