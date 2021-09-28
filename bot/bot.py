@@ -7,7 +7,7 @@ class ChemistryBot(commands.Bot):
         self.DEBUG = True
         self.remove_command('help')
         
-        cogs = ['cog_simple_balance', 'cog_listeners']
+        cogs = ['cogs.cog_simple_balance', 'cogs.cog_listeners']
         for cog in cogs:
             self.load_extension(cog)
 

@@ -1,7 +1,6 @@
 from typing import Tuple, Dict, Set
 
-from chempy.chemistry import Substance, Reaction
-from chempy.chemistry import balance_stoichiometry
+# from chempy.chemistry import Substance, Reaction, balance_stoichiometry
 
 
 def replace_square_bracket(raw: str) -> str:

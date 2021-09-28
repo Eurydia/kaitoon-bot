@@ -32,7 +32,6 @@ class RedoxBalance(commands.Cog):
         await ctx.message.reply(f'> {ctx.message.content}\nDiscord Error: {error}')
 
 
-
 def setup(bot: commands.Bot):
     bot.add_cog(RedoxBalance(bot))
 

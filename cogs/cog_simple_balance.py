@@ -1,6 +1,6 @@
 from discord.ext import commands
 
-from utils import format_reaction, simple_balance
+from cogs.utils import format_reaction, simple_balance
 
 
 class SimpleBalance(commands.Cog):

@@ -1,8 +1,6 @@
 from discord import Message, Game, Status
 from discord.ext import commands
 
-from bot import ChemistryBot
-
 class CogListeners(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
