@@ -4,7 +4,7 @@ from discord.ext import commands
 from bot import ChemistryBot
 
 class CogListeners(commands.Cog):
-    def __init__(self, bot: ChemistryBot) -> None:
+    def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
     
     @commands.Cog.listener()
@@ -33,7 +33,6 @@ class CogListeners(commands.Cog):
 
         if self.bot.DEBUG:
             pass
-
 
 def setup(bot):
     bot.add_cog(CogListeners(bot))
