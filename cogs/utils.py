@@ -1,7 +1,7 @@
 from typing import Tuple, Dict, Set
 
-# from chempy.chemistry import Substance, Reaction, balance_stoichiometry
-
+from chempy.chemistry import Substance, Reaction
+from chempy.chemistry import balance_stoichiometry
 
 def replace_square_bracket(raw: str) -> str:
     formatted = raw.replace('[', '(')
@@ -29,26 +29,16 @@ def format_reaction(reactants_bal: Dict, products_bal: Dict) -> str:
     return reaction.unicode(substances)
 
 
-def bal_stoich(reactants_set: Set, products_set: Set) -> Tuple[Dict, Dict]:
-    reactants_bal, products_bal = balance_stoichiometry(reactants_set, products_set)
-    reactants_bal, products_bal = map(dict, (reactants_bal, products_bal))
-    return reactants_bal, products_bal
-
-
 def simple_balance(reactants_str: str, products_str: str) -> Tuple[Dict, Dict]: 
     reactants_set, products_set = prepare_reaction(reactants_str, products_str)
-
+    
     reactants_charge = sum(Substance.from_formula(s).charge for s in reactants_set)
     products_charge = sum(Substance.from_formula(s).charge for s in products_set)
-
     if reactants_charge > products_charge:
         reactants_set.add('e-')
     elif reactants_charge < products_charge:
         products_set.add('e-')
 
-    return bal_stoich(reactants_set, products_set)
+    r, p = map(dict, balance_stoichiometry(reactants_set, products_set))
+    return r, p
 
-def simple_balance(reactants_str: str, products_str: str) -> Tuple[Dict, Dict]: 
-    reactants_set, products_set = prepare_reaction(reactants_str, products_str)
-    reduction = [[], []]
-    oxidation = [[], []]

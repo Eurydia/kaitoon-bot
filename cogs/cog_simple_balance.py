@@ -17,13 +17,12 @@ class SimpleBalance(commands.Cog):
 
             try:
                 reac, prod = simple_balance(reactants, products)
-                reac, prod = map(dict, (reac, prod))
             except ValueError as e:
-                formatted_str = format_reaction(
-                    {r:1 for r in reac}, 
-                    {p:1 for p in prod}
-                    )
-                await ctx.reply(f'> {formatted_str}\nValue Error: {e}')
+                # formatted_str = format_reaction(
+                #     {r:1 for r in reac}, 
+                #     {p:1 for p in prod}
+                #     )
+                # await ctx.reply(f'> {formatted_str}\nValue Error: {e}')
                 return
             else:
                 pass
