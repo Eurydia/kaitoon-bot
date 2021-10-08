@@ -14,10 +14,11 @@ class Kaitoon(commands.Bot):
 
         self.driver_option = Options()
         self.driver_option.binary_location = getenv('CHROME_BIN')
-        self.driver_option.add_argument('--no-sandbox')
         self.driver_option.add_argument('--headless')
+        self.driver_option.add_argument('--disable-gpu')
         self.driver_option.add_argument('--disable-dev-shm-usage')
-
+        self.driver_option.add_argument('--no-sandbox')
+        
         self.driver_path = getenv('CHROME_PATH')
         
         cogs = (
