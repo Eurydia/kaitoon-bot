@@ -1,7 +1,7 @@
-from discord import Message, Game, Status
+from discord import Message, Game
 from discord.ext import commands
 
-class CogListeners(commands.Cog):
+class EventListener(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
     
@@ -33,4 +33,4 @@ class CogListeners(commands.Cog):
             pass
 
 def setup(bot):
-    bot.add_cog(CogListeners(bot))
+    bot.add_cog(EventListener(bot))

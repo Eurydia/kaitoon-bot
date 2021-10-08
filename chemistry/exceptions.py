@@ -1,0 +1,4 @@
+class ResultDivNotFound(Exception):
+    pass
+
+
