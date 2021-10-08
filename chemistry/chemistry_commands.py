@@ -101,7 +101,7 @@ async def _redox_balance(bot, median: str, reactants: str, products: str) -> Emb
         error_msg = 'It was not possible to calculate the stoichiometric coefficients of the equation with the mathematical method.'
     
     d = prepare_dict(
-        f'{median} {reactants} and {products}',
+        f'{median} and {reactants} and {products}',
         f'({median_t}) {reaction_ub}',
         f'{reaction_b} ({median_t.title()})',
         error_msg

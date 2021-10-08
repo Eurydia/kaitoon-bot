@@ -26,11 +26,11 @@ def prepare_balanced(result_div: Union[element.Tag, element.NavigableString]) ->
             elif child.name == 'span':
                 for sub_child in child.childGenerator():
                     if isinstance(sub_child, element.NavigableString):
-                        answer += f" {sub_child.strip()}"
-                    elif isinstance(sub_child, element.Comment):
-                        pass
-            else:
+                        answer += sub_child.strip()
+            elif child['class'] == 'dblarrow':
                 answer += ' ⇆ '
+        elif isinstance(child, element.Comment):
+            pass
         elif isinstance(child, element.NavigableString):
             answer += child.string.strip()
     return answer.replace('\n', '')
