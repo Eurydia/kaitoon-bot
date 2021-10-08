@@ -4,8 +4,10 @@ from bot.bot import Kaitoon
 
 def main():
     #TODO: DEBUG mode
-    #TODO: REDOX reactional
-    #TODO: System of equation
+    #TODO: Combining equations
+    #TODO: Product prediction
+    #TODO: Oxidation number assignment
+    
 
     bot = Kaitoon('#')
     bot.run(getenv('TOKEN'))

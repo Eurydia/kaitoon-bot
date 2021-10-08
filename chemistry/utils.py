@@ -33,7 +33,6 @@ def prepare_balanced(result_div: Union[element.Tag, element.NavigableString]) ->
                 answer += ' ⇆ '
         elif isinstance(child, element.NavigableString):
             answer += child.string.strip()
-        
     return answer.replace('\n', '')
 
 
