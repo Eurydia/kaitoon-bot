@@ -85,10 +85,7 @@ async def _redox_balance(bot, median: str, reactants: str, products: str) -> Emb
     result_div = soup.find('div', {'class': 'eq-final'})           
     error_div = soup.find('div', {'class': 'eq-c'})
     
-    if median.lower().startswith('a'):
-        median_t = 'acidic median'
-    else:
-        median_t = 'basic median'
+    median_t = 'basic median' if median.lower().startswith('b') else 'acidic median'
 
     if result_div:
         reaction_b = prepare_balanced(result_div)
@@ -103,7 +100,7 @@ async def _redox_balance(bot, median: str, reactants: str, products: str) -> Emb
     d = prepare_dict(
         f'{median} and {reactants} and {products}',
         f'({median_t}) {reaction_ub}',
-        f'{reaction_b} ({median_t.title()})',
+        f'{reaction_b}\n({median_t.title()})',
         error_msg
     )
          

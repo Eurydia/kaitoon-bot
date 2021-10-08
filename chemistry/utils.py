@@ -18,22 +18,26 @@ def prepare_unbalanced(r: str, p: str) -> str:
 def prepare_balanced(result_div: Union[element.Tag, element.NavigableString]) -> str:    
     answer = ''
     for child in result_div.childGenerator():
+        if isinstance(child, element.Comment):
+            continue
         if isinstance(child, element.Tag):
             if child.name == 'sub':
                 answer += ''.join(SUBSCRIPTIONS.get(key) for key in child.string)
             elif child.name == 'sup':
                 answer += ''.join(SUPERSCRIPTIONS.get(key) for key in child.string)
             elif child.name == 'span':
+                if 'dblarrow' in child.get('class'):
+                    answer += '<>'
+                    continue
                 for sub_child in child.childGenerator():
                     if isinstance(sub_child, element.NavigableString):
-                        answer += sub_child.strip()
-            elif child['class'] == 'dblarrow':
-                answer += ' ⇆ '
-        elif isinstance(child, element.Comment):
-            pass
-        elif isinstance(child, element.NavigableString):
-            answer += child.string.strip()
-    return answer.replace('\n', '')
+                        answer += sub_child
+        else:
+            answer += child.string
+    r, p = answer.replace('\n', '').split('<>')
+    r, p = map(lambda x: x.split('+'), (r, p))
+    answer = f"{' + '.join(c.strip() for c in r)} ⇆ {' + '.join(c.strip() for c in p)}"
+    return answer
 
 
 def prepare_dict(input_as: str, interpreted_as: str, result: str, error_msg: str) -> dict:
