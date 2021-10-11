@@ -10,7 +10,7 @@ def main():
     #TODO: Combining equations
 
     bot = Kaitoon('#')
-    bot.run(getenv('TOKEN'))
+    bot.run(getenv('TOKEN_EXP'))
     
 if __name__ == '__main__':
 	main()
