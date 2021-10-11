@@ -1,4 +1,4 @@
-from os import getenv
+from os import environ
 
 from discord.ext import commands
 from selenium.webdriver import Chrome
@@ -13,13 +13,13 @@ class Kaitoon(commands.Bot):
         self.remove_command('help')
 
         self.driver_option = Options()
-        self.driver_option.binary_location = getenv('GOOGLE_CHROME_BIN')
+        self.driver_option.binary_location = environ.get('GOOGLE_CHROME_BIN')
         self.driver_option.add_argument('--headless')
         self.driver_option.add_argument('--disable-gpu')
         self.driver_option.add_argument('--disable-dev-shm-usage')
         # self.driver_option.add_argument('--no-sandbox')
         
-        self.driver_path = getenv('CHROMEDRIVER_PATH')
+        self.driver_path = environ.get('CHROMEDRIVER_PATH')
         
         cogs = (
             'chemistry.chemistry_cogs',
@@ -30,4 +30,4 @@ class Kaitoon(commands.Bot):
             self.load_extension(cog)
 
     def get_driver(self):
-        return Chrome(chrome_options=self.driver_option)
+        return Chrome(executable_path=self.driver_path, chrome_options=self.driver_option)
