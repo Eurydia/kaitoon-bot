@@ -13,7 +13,8 @@ class Kaitoon(commands.Bot):
         self.remove_command('help')
 
         self.driver_option = Options()
-        self.driver_option.binary_location = environ.get('GOOGLE_CHROME_BIN')
+        # GOOGLE_CHROME_SHIM
+        self.driver_option.binary_location = environ.get('GOOGLE_CHROME_SHIM')
         self.driver_option.add_argument('--headless')
         self.driver_option.add_argument('--disable-gpu')
         self.driver_option.add_argument('--disable-dev-shm-usage')
