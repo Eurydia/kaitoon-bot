@@ -30,4 +30,4 @@ class Kaitoon(commands.Bot):
             self.load_extension(cog)
 
     def get_driver(self):
-        return Chrome(executable_path=self.driver_path, chrome_options=self.driver_option)
+        return Chrome(chrome_options=self.driver_option)
