@@ -1,4 +1,3 @@
-from asyncio import sleep
 from typing import Union, List, Tuple
 
 from bs4 import BeautifulSoup, element

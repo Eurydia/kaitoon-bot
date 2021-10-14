@@ -12,12 +12,11 @@ class Kaitoon(commands.Bot):
         self.DEBUG = True
         self.remove_command('help')
 
-        self.driver_option = Options()
-        self.driver_option.binary_location = environ.get('GOOGLE_CHROME_BIN')
-        self.driver_option.add_argument('--headless')
-        self.driver_option.add_argument('--disable-gpu')
-        self.driver_option.add_argument('--disable-dev-shm-usage')
-        self.driver_path = environ.get('CHROMEDRIVER_PATH')
+        self._chrome_options = Options()
+        self._chrome_options.binary_location = environ.get("GOOGLE_CHROME_BIN")
+        self._chrome_options.add_argument("--headless")
+        self._chrome_options.add_argument("--disable-dev-shm-usage")
+        self._chrome_options.add_argument("--no-sandbox")
         
         cogs = (
             'chemistry.cogs',
@@ -28,4 +27,4 @@ class Kaitoon(commands.Bot):
             self.load_extension(cog)
 
     def get_driver(self):
-        return Chrome(executable_path=self.driver_path, chrome_options=self.driver_option)
+        return Chrome(executable_path=environ.get("CHROMEDRIVER_PATH"), chrome_options=self._chrome_options)
