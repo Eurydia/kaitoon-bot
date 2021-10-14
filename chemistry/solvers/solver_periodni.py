@@ -5,16 +5,20 @@ from bs4 import BeautifulSoup, element
 from discord import Embed, Colour
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.chrome.webdriver import WebDriver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
 
-from .chemistry_command_bc import ChemistryCommandsBaseClass
-from .utils import SUPERSCRIPTIONS, SUBSCRIPTIONS
+from chemistry.solvers.solver_base_class import ChemistrySolverBaseClass
+from bot.bot import Kaitoon
+from chemistry.solvers.utils import SUPERSCRIPTIONS, SUBSCRIPTIONS
 
-class Periodni(ChemistryCommandsBaseClass):
-    def __init__(self, bot: 'Kaitoon'):
+class Periodni(ChemistrySolverBaseClass):
+    def __init__(self, bot: Kaitoon):
         self.bot = bot
     
     @staticmethod
-    def _prepare_ub(reatants: str, products: str) -> str:
+    def _prepare_query(reatants: str, products: str) -> str:
         reatants, products = map(lambda s: s.replace(',', ' ').replace(' + ', ' '), (reatants, products))
         reatants, products = map(lambda s: s.split(), (reatants, products))
         reatants = ' + '.join(c.strip() for c in reatants)
@@ -23,14 +27,14 @@ class Periodni(ChemistryCommandsBaseClass):
         return reaction
     
     @staticmethod
-    def _prepare_b(result_div: element.Tag) -> str:
+    def _prepare_result(result_div: element.Tag) -> str:
         answer = ['', '']
         i = 0
         for child in result_div.childGenerator():
             if isinstance(child, element.Comment):
                 continue
             if isinstance(child, element.Tag):
-                if 'dblarrow' in child.get('class'):
+                if 'dblarrow' in child.get('class', set()):
                     i = 1
                 elif child.name == 'sup':
                     answer[i] += ''.join(SUPERSCRIPTIONS.get(key) for key in child.string)
@@ -46,17 +50,18 @@ class Periodni(ChemistryCommandsBaseClass):
         return f'{r} ⇆ {p}'
 
     @staticmethod
-    def _prepare_embed(result: str, inputs: str, interpreted: str) -> Embed:
+    def _prepare_embed(result: str, inputs: str, interpreted: str, description: str='') -> Embed:
         embed = Embed(
             title=result,
+            description=description,
             color=Colour.green()
         )
         if not result:
-            embed.title = '😐Something went wrong.'
+            embed.title = '😐 Something went wrong.'
             embed.color = Colour.red()
-            embed.add_field(name='Status', value='❎Failed', inline=False)
+            embed.add_field(name='Status', value='❎ Failed', inline=False)
         else:
-            embed.add_field(name='Status', value='✅Success', inline=False)
+            embed.add_field(name='Status', value='✅ Success', inline=False)
         embed.add_field(name='Input', value=inputs, inline=False)
         embed.add_field(name='Interpreted as', value=interpreted, inline=False)
         embed.set_footer(text='Powered by www.periodni.com')
@@ -74,7 +79,7 @@ class _OxidationNumberAssignment(Periodni):
         driver.get('https://www.periodni.com/oxidation_numbers_calculator.php')
         results_data = []
         for formula in stack:
-            page_source = self._prepare_page_source(driver, formula)
+            page_source = await self._prepare_page_source(driver, formula)
             result = self._format_page_source(page_source)
             results_data.append((formula, result))
         driver.quit()
@@ -90,14 +95,19 @@ class _OxidationNumberAssignment(Periodni):
 
     @staticmethod
     async def _prepare_page_source(driver:WebDriver, formula: str) -> str:
-        form: WebElement = driver.find_element_by_id('phpforma')
-
+        form: WebElement = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located(
+                (By.XPATH, '/html/body/div/div[2]/div[1]/div[1]/div/form')
+                )
+        )
         text_input: WebElement = form.find_element_by_name('equation')
+        text_input.clear()
         text_input.send_keys(formula)
 
         submit: WebElement = form.find_element_by_name('submit')
         submit.click()
-        await sleep(0.5)
+
+        driver.implicitly_wait(1)
 
         page_source = driver.page_source
         return page_source
@@ -107,13 +117,13 @@ class _OxidationNumberAssignment(Periodni):
         result_div = soup.find('table', {'class': 'ontable'})
         if not result_div:
             return None
-        result = self._prepare_b(result_div)
-        return result
-    
-    @staticmethod
-    def _prepare_b(result_div: element.Tag) -> Tuple[str, str]:
         body = result_div.find('tbody')
-        rows= body.findAll('tr')
+        result = self._prepare_result(body)
+        return result
+        
+    @staticmethod
+    def _prepare_result(table_body: element.Tag) -> Tuple[str, str]:
+        rows = table_body.findAll('tr')
         result_arr = []
         i = -1
         for key, val in zip(*(row.childGenerator() for row in rows)):
@@ -130,31 +140,34 @@ class _SimpleBalance(Periodni):
         super().__init__(bot)
     
     async def solve(self, reactants: str, products: str) -> Embed:
-        reaction_ub = self._prepare_ub(reactants, products)
+        reaction_ub = self._prepare_query(reactants, products)
     
         driver = self.bot.get_driver()
         driver.get('https://www.periodni.com/balancing_chemical_equations.php')
-        page_source = await self._prepapre_page_source(driver, reaction_ub)
+        page_source = await self._prepare_page_source(driver, reaction_ub)
         driver.quit()
 
-        reaction_b = self._format_page_source(page_source)
+        title = self._format_page_source(page_source)
         embed = self._prepare_embed(
-            reaction_b,
-            f'{reactants} and {products}',
+            title,
+            f'"{reactants}" and "{products}"',
             reaction_ub
         )
         return embed
-
+    
     @staticmethod
     async def _prepare_page_source(driver: WebDriver, reaction_ub: str) -> str:
-        form: WebElement = driver.find_element_by_id("phpforma")
-        
+        form: WebElement = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located(
+                (By.XPATH, '/html/body/div/div[2]/div[1]/div[1]/div/form')
+                )
+            )
         text_input: WebElement = form.find_element_by_name('equation')
         text_input.send_keys(reaction_ub)
 
         submit: WebElement = form.find_element_by_id("submit")
         submit.click()
-        await sleep(0.75)
+        driver.implicitly_wait(1)
 
         page_source = driver.page_source
         return page_source
@@ -162,9 +175,10 @@ class _SimpleBalance(Periodni):
     def _format_page_source(self, page_source: str) -> Union[str, None]:
         soup = BeautifulSoup(page_source, 'html.parser')
         result_div = soup.find('div', {'class': 'eqbody eqcenter'})
-        if not result_div: 
+        error_p = soup.find('p', {'class': 'crven'})
+        if not result_div or error_p: 
             return None
-        reaction_b = self._prepare_balanced(result_div)
+        reaction_b = self._prepare_result(result_div)
         return reaction_b
     
 
@@ -176,7 +190,7 @@ class _RedoxBalance(Periodni):
         if not any(median.lower() == m for m in ('a', 'acidic', 'b', 'basic')):
             raise ValueError('Medium must be "(A)cidic" or "(B)asic" only.')
         
-        reaction_ub = self._prepare_ub(reactants, products)
+        reaction_ub = self._prepare_query(reactants, products)
 
         driver = self.bot.get_driver()
         driver.get('https://www.periodni.com/ars_method.php')
@@ -184,16 +198,21 @@ class _RedoxBalance(Periodni):
         driver.quit()
 
         result = self._format_page_source(page_source)
+        m = 'Acidic' if median.lower().startswith('a') else 'Basic'
         embed = self._prepare_embed(
             result,
-            f'{median} and {reactants} and {products}',
-            reaction_ub
+            f'"{median}" and "{reactants}" and "{products}"',
+            f'({m}) {reaction_ub}'
         )
         return embed
     
     @staticmethod
     async def _prepare_page_source(driver: WebDriver, reaction_ub: str, median: str) -> str:
-        form: WebElement = driver.find_element_by_id("phpforma")
+        form: WebElement = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located(
+                (By.XPATH, '/html/body/div/div[2]/div[1]/div[1]/div/form')
+                )
+            )
         
         text_input: WebElement = form.find_element_by_name('equation')
         text_input.send_keys(reaction_ub)
@@ -204,11 +223,10 @@ class _RedoxBalance(Periodni):
 
         submit: WebElement = form.find_element_by_id("submit")
         submit.click()
-        await sleep(0.75)
-        form: WebElement = driver.find_element_by_id("phpforma")
-        submit: WebElement = form.find_element_by_id("submit")
+        driver.implicitly_wait(1)
+
         submit.click()
-        await sleep(0.75)
+        driver.implicitly_wait(1)
         
         page_source = driver.page_source
         return page_source
@@ -218,6 +236,6 @@ class _RedoxBalance(Periodni):
         result_div = soup.find('div', {'class': 'eq-final'})
         if not result_div:
             return None
-        reaction_b = self._prepare_b(result_div)
+        reaction_b = self._prepare_result(result_div)
         return reaction_b
         

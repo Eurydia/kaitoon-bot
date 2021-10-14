@@ -3,13 +3,15 @@ from typing import Dict
 
 from discord.ext import commands
 
-from .periodni import _OxidationNumberAssignment, _SimpleBalance, _RedoxBalance
-
+from bot.bot import Kaitoon
+from .solvers.solver_base_class import ChemistrySolverBaseClass
+from .solvers.solver_periodni import _OxidationNumberAssignment, _SimpleBalance, _RedoxBalance
+from .solvers.solver_chemequations import _ReactionPrediction
 
 _CHEMISTRY_COMMANDS: Dict[str, "ChemistryCogs"] = {}
 
 class ChemistryCogs(commands.Cog):
-    def __init__(self, bot: "Kaitoon", solver: "ChemistryCommandsBaseClass"= None) -> None:
+    def __init__(self, bot: Kaitoon, solver: ChemistrySolverBaseClass=None) -> None:
         self.bot = bot
         self.solver = solver
 
@@ -79,10 +81,31 @@ class RedoxBalance(ChemistryCogs):
         await ctx.send(f'> {ctx.message.content}\n{error}')
 
 
+class ReactionPrediction(ChemistryCogs):
+    def __init__(self, bot) -> None:
+        super().__init__(bot, _ReactionPrediction(bot))
+
+    @staticmethod
+    def cmd_name() -> str:
+        return 'predict'
+    
+    @commands.command(name='predict')
+    async def main_comamnd(self, ctx: commands.Context, reactants: str, products: str='') -> None:
+        result = await self.solver.solve(reactants, products)
+        await ctx.send(embed=result)
+
+    @main_comamnd.error
+    async def _on_error(self, ctx: commands.Context, error: Exception) -> None:
+        await ctx.send(f'> {ctx.message.content}\n{error}')
+
 class ProperCommandHandler(ChemistryCogs):
     def __init__(self, bot):
         super().__init__(bot)
     
+    @staticmethod
+    def cmd_name() -> str:
+        return 'kaitoon'
+
     @commands.command(name='kaitoon')
     async def main_comamnd(self, ctx: commands.Context, cmd_to_call: str, *args) -> None:
         cmd = _CHEMISTRY_COMMANDS.get(cmd_to_call, None)
@@ -90,13 +113,17 @@ class ProperCommandHandler(ChemistryCogs):
             raise ValueError(f'Unknown command name "{cmd_to_call}"')
         solver = cmd(self.bot).solver
         results = await solver.solve(*args)
-        for result in results:
+        try:
+            results_t = tuple(results)
+        except TypeError:
+            results_t = (results, )
+        for result in results_t:
             await ctx.send(embed=result)
             await sleep(0.75)
     
-    @main_comamnd.error
-    async def _on_error(self, ctx: commands.Context, error: Exception) -> None:
-        await ctx.send(f'> {ctx.message.content}\n{error}')
+    # @main_comamnd.error
+    # async def _on_error(self, ctx: commands.Context, error: Exception) -> None:
+    #     await ctx.send(f'> {ctx.message.content}\n{error}')
 
 
 def setup(bot):

@@ -1,9 +1,9 @@
-from abc import ABC, abstractmethod, abstractclassmethod, abstractclassmethod, abstractstaticmethod
+from abc import ABC, abstractmethod, abstractstaticmethod
 from typing import Union
 
 from discord import Embed
 
-class ChemistryCommandsBaseClass(ABC):
+class ChemistrySolverBaseClass(ABC):
     def __init_subclass__(cls) -> None:
         return super().__init_subclass__()
 
@@ -20,11 +20,11 @@ class ChemistryCommandsBaseClass(ABC):
         pass
 
     @abstractstaticmethod
-    def _prepare_ub() -> str:
+    def _prepare_query() -> str:
         pass
     
     @abstractstaticmethod
-    def _prepare_b() -> str:
+    def _prepare_result() -> str:
         pass
     
     @abstractstaticmethod

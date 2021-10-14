@@ -11,7 +11,7 @@ class EventListener(commands.Cog):
             print(f'Bot ready {self.bot.user}.')
 
         await self.bot.change_presence(
-            activity=Game('4D Chess | #bal')
+            activity=Game('#on | #bal | #re | #predict')
             )
 
     @commands.Cog.listener()
