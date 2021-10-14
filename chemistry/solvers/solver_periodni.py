@@ -1,4 +1,5 @@
 from typing import Union, List, Tuple
+from asyncio import sleep
 
 from bs4 import BeautifulSoup, element
 from discord import Embed, Colour
@@ -7,6 +8,7 @@ from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
 
 from chemistry.solvers.solver_base_class import ChemistrySolverBaseClass
 from bot.bot import Kaitoon
@@ -94,17 +96,12 @@ class _OxidationNumberAssignment(Periodni):
 
     @staticmethod
     async def _prepare_page_source(driver:WebDriver, formula: str) -> str:
-        form: WebElement = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located(
-                (By.XPATH, '/html/body/div/div[2]/div[1]/div[1]/div/form')
-                )
-        )
+        form: WebElement = driver.find_element_by_xpath('/html/body/div/div[2]/div[1]/div[1]/div/form')
+        
         text_input: WebElement = form.find_element_by_name('equation')
         text_input.clear()
         text_input.send_keys(formula)
-
-        submit: WebElement = form.find_element_by_name('submit')
-        submit.click()
+        text_input.send_keys(Keys.ENTER)
 
         driver.implicitly_wait(1)
 
@@ -156,18 +153,12 @@ class _SimpleBalance(Periodni):
     
     @staticmethod
     async def _prepare_page_source(driver: WebDriver, reaction_ub: str) -> str:
-        form: WebElement = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located(
-                (By.XPATH, '/html/body/div/div[2]/div[1]/div[1]/div/form')
-                )
-            )
+        form: WebElement = driver.find_element_by_xpath('/html/body/div/div[2]/div[1]/div[1]/div/form')
+
         text_input: WebElement = form.find_element_by_name('equation')
         text_input.send_keys(reaction_ub)
-
-        submit: WebElement = form.find_element_by_id("submit")
-        submit.click()
+        text_input.send_keys(Keys.ENTER)
         driver.implicitly_wait(1)
-
         page_source = driver.page_source
         return page_source
 
@@ -207,26 +198,16 @@ class _RedoxBalance(Periodni):
     
     @staticmethod
     async def _prepare_page_source(driver: WebDriver, reaction_ub: str, median: str) -> str:
-        form: WebElement = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located(
-                (By.XPATH, '/html/body/div/div[2]/div[1]/div[1]/div/form')
-                )
-            )
-        
-        text_input: WebElement = form.find_element_by_name('equation')
-        text_input.send_keys(reaction_ub)
+        form: WebElement = driver.find_element_by_xpath('/html/body/div/div[2]/div[1]/div[1]/div/form')
 
         if median.lower().startswith('b'):
             basic_median_radio: WebElement = form.find_element_by_id("intBasic")
             basic_median_radio.click()
-
-        submit: WebElement = form.find_element_by_id("submit")
-        submit.click()
-        driver.implicitly_wait(1)
-
-        submit.click()
-        driver.implicitly_wait(1)
         
+        text_input: WebElement = form.find_element_by_name('equation')
+        text_input.send_keys(reaction_ub)
+        text_input.send_keys(Keys.ENTER)
+        await sleep(1)
         page_source = driver.page_source
         return page_source
 
