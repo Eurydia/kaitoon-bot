@@ -8,7 +8,7 @@ def main():
     #TODO: Help embeds/ help commands
 
     bot = Kaitoon('#')
-    bot.run(getenv('TOKEN'))
+    bot.run(getenv('TOKEN_EXP'))
     
 if __name__ == '__main__':
 	main()

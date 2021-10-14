@@ -40,9 +40,9 @@ class ONAssignment(ChemistryCogs):
             await ctx.send(embed=result)
             await sleep(0.75)
 
-    @main_comamnd.error
-    async def _on_error(self, ctx: commands.Context, error: Exception) -> None:
-        await ctx.send(f'> {ctx.message.content}\n{error}')
+    # @main_comamnd.error
+    # async def _on_error(self, ctx: commands.Context, error: Exception) -> None:
+    #     await ctx.send(f'> {ctx.message.content}\n{error}')
 
 
 class SimpleBalance(ChemistryCogs):
@@ -58,9 +58,9 @@ class SimpleBalance(ChemistryCogs):
         result = await self.solver.solve(reactants, products)
         await ctx.send(embed=result)
 
-    @main_comamnd.error
-    async def _on_error(self, ctx: commands.Context, error: Exception) -> None:
-        await ctx.send(f'> {ctx.message.content}\n{error}')
+    # @main_comamnd.error
+    # async def _on_error(self, ctx: commands.Context, error: Exception) -> None:
+    #     await ctx.send(f'> {ctx.message.content}\n{error}')
 
 
 class RedoxBalance(ChemistryCogs):
@@ -76,9 +76,9 @@ class RedoxBalance(ChemistryCogs):
         result = await self.solver.solve(median, reactants, products)
         await ctx.send(embed=result)
 
-    @main_comamnd.error
-    async def _on_error(self, ctx: commands.Context, error: Exception) -> None:
-        await ctx.send(f'> {ctx.message.content}\n{error}')
+    # @main_comamnd.error
+    # async def _on_error(self, ctx: commands.Context, error: Exception) -> None:
+    #     await ctx.send(f'> {ctx.message.content}\n{error}')
 
 
 class ReactionPrediction(ChemistryCogs):
@@ -94,9 +94,9 @@ class ReactionPrediction(ChemistryCogs):
         result = await self.solver.solve(reactants, products)
         await ctx.send(embed=result)
 
-    @main_comamnd.error
-    async def _on_error(self, ctx: commands.Context, error: Exception) -> None:
-        await ctx.send(f'> {ctx.message.content}\n{error}')
+    # @main_comamnd.error
+    # async def _on_error(self, ctx: commands.Context, error: Exception) -> None:
+    #     await ctx.send(f'> {ctx.message.content}\n{error}')
 
 class ProperCommandHandler(ChemistryCogs):
     def __init__(self, bot):
