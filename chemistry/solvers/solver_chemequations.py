@@ -97,7 +97,7 @@ class _ReactionPrediction(ChemEquation):
             embed.title = f'Found {result_total} equation(s)!'
             embed.description = f'Showing **{len(eqs)}** of **{result_total}** equations\n'
             embed.description += '\n'.join(f'{i}. {eq}\n' for i, eq in enumerate(eqs, 1))
-            embed.description += '** . . . **\n**Due to major API limitation, Kaitoon can only show, at most , 10 reactions.'
+            embed.description += '** . . . **\n**Due to major API limitation, Kaitoon can only show, at most, 10 reactions.'
             embed.add_field(name='Status', value='✅ Success', inline=False)
 
         embed.add_field(name='Input', value=inputs, inline=False)
