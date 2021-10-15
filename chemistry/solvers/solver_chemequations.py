@@ -92,7 +92,7 @@ class _ReactionPrediction(ChemEquation):
         else:
             result_total, offset, eqs = result
             embed.title = f'Found {result_total} equation(s)!'
-            embed.description = f'Showing result {offset+1} - {((offset//1)+1)*10} of **{result_total}** equations\n'
+            embed.description = f'Showing result {offset+1} - {((offset//10)+1)*10} of **{result_total}** equations\n'
             embed.description += '\n'.join(f'{i}. {eq}\n' for i, eq in enumerate(eqs, offset+1))
             embed.add_field(name='Status', value='✅ Success', inline=False)
 
