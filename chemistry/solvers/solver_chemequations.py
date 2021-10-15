@@ -17,14 +17,19 @@ class _ReactionPrediction(ChemEquation):
     def __init__(self, bot):
         super().__init__(bot)
     
-    async def solve(self, reactants: str, products: str='', page_num: int=0) -> Embed:
+    async def solve(self, reactants: str, products: str='', page_num: int=1) -> Embed:
         def p_string(string: str) -> str:
             string = string.replace(',', ' ').replace(' + ', ' ')
             return string
         p_reactants, p_products = map(p_string, (reactants, products))
         prep_r, prep_p = self._prepare_query(reactants, products)
-
+        
         page_source = await self._prepare_page_source(prep_r, prep_p)
+        
+        page_num -= 1
+        if page_num < 0:
+            page_num = 0
+        
         result = self._format_page_source(page_source, page_num)
         embed = self._prepare_embed(
             result,
