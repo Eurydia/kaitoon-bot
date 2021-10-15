@@ -25,7 +25,7 @@ class _ReactionPrediction(ChemEquation):
         prep_r, prep_p = self._prepare_query(reactants, products)
 
         page_source = await self._prepare_page_source(prep_r, prep_p)
-        result = self._format_page_source(page_source)
+        result = self._format_page_source(page_source, page_num)
         embed = self._prepare_embed(
             result,
             f'"{reactants}" and "{products}"',
@@ -93,7 +93,7 @@ class _ReactionPrediction(ChemEquation):
             result_total, offset, eqs = result
             embed.title = f'Found {result_total} equation(s)!'
             embed.description = f'Showing result {offset+1} - {((offset//1)+1)*10} of **{result_total}** equations\n'
-            embed.description += '\n'.join(f'{i}. {eq}\n' for i, eq in enumerate(eqs, 1))
+            embed.description += '\n'.join(f'{i}. {eq}\n' for i, eq in enumerate(eqs, offset+1))
             embed.add_field(name='Status', value='✅ Success', inline=False)
 
         embed.add_field(name='Input', value=inputs, inline=False)
