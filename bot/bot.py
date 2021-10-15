@@ -13,7 +13,7 @@ class Kaitoon(commands.Bot):
         self.remove_command('help')
 
         self._chrome_options = Options()
-        self._chrome_options.binary_location = environ.get("GOOGLE_CHROME_SHIM")
+        # self._chrome_options.binary_location = environ.get("GOOGLE_CHROME_SHIM")
         # self._chrome_options.add_argument("--headless")
         # self._chrome_options.add_argument('--disable-gpu')
         self._chrome_options.add_argument("--disable-dev-shm-usage")
