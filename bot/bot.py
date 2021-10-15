@@ -14,9 +14,10 @@ class Kaitoon(commands.Bot):
 
         self._chrome_options = Options()
         self._chrome_options.binary_location = environ.get("GOOGLE_CHROME_SHIM")
-        # self._chrome_options.add_argument("--headless")
-        # self._chrome_options.add_argument('--disable-gpu')
+        self._chrome_options.add_argument("--headless")
+        self._chrome_options.add_argument('--disable-gpu')
         self._chrome_options.add_argument("--disable-dev-shm-usage")
+        self._chrome_options.add_argument('--no-sandbox')
         self._chrome_path = environ.get("CHROMEDRIVER_PATH")
 
         cogs = (
