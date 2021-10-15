@@ -90,8 +90,8 @@ class ReactionPrediction(ChemistryCogs):
         return 'predict'
     
     @commands.command(name='predict')
-    async def main_comamnd(self, ctx: commands.Context, reactants: str, products: str='') -> None:
-        result = await self.solver.solve(reactants, products)
+    async def main_comamnd(self, ctx: commands.Context, reactants: str, products: str='', page: int=0) -> None:
+        result = await self.solver.solve(reactants, products, page)
         await ctx.send(embed=result)
 
     @main_comamnd.error

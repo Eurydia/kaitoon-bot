@@ -17,7 +17,7 @@ class _ReactionPrediction(ChemEquation):
     def __init__(self, bot):
         super().__init__(bot)
     
-    async def solve(self, reactants: str, products: str='') -> Embed:
+    async def solve(self, reactants: str, products: str='', page_num: int=0) -> Embed:
         def p_string(string: str) -> str:
             string = string.replace(',', ' ').replace(' + ', ' ')
             return string
@@ -46,17 +46,15 @@ class _ReactionPrediction(ChemEquation):
 
     @staticmethod
     def _prepare_result(json_dict: dict):
-        result = [json_dict.get('resultCount', 0)]
         formatted_equations = []
         for equation in json_dict.get('searchResults'):
             soup = BeautifulSoup(equation.get('equationStrBold', ''), 'html.parser')
             eq = ' '.join(f'__{s.text.strip()}__' if isinstance(s, element.Tag) else s.text.strip()
                             for s in soup.childGenerator()
                             )
-            eq = eq.replace(':', '').replace(' ', '  ')
+            eq = eq.replace(':', '')
             formatted_equations.append(eq)
-        result.append(tuple(formatted_equations))
-        return result
+        return json_dict.get('resultCount', 0), json_dict.get('offset', 0), tuple(formatted_equations)
 
     @staticmethod
     async def _prepare_page_source(
@@ -67,17 +65,16 @@ class _ReactionPrediction(ChemEquation):
             r = get(url)
             return r.text
 
-    def _format_page_source(self, page_source: str) -> Union[Tuple, None]:
+    def _format_page_source(self, page_source: str, page_num: int) -> Union[Tuple, None]:
         soup = BeautifulSoup(page_source, 'html.parser')
-
         div_table = soup.find('div', {'class': 'search-results-async'})
         if not div_table:
             return None
-
         div_attrs = div_table.attrs
         reactantids = div_attrs.get('data-reactantids')
         productids = div_attrs.get('data-productids')
-        api_url = f'https://chemequations.com/api/search-reactions-by-compound-ids?reactantIds={reactantids}&productIds={productids}&offset=0'
+        offset = page_num * 10
+        api_url = f'https://chemequations.com/api/search-reactions-by-compound-ids?reactantIds={reactantids}&productIds={productids}&offset={offset}'
         r = get(api_url)
         json_dict = loads(r.text)
         results = self._prepare_result(json_dict)
@@ -93,11 +90,10 @@ class _ReactionPrediction(ChemEquation):
             embed.color = Colour.red()
             embed.add_field(name='Status', value='❎ Failed', inline=False)
         else:
-            result_total, eqs = result
+            result_total, offset, eqs = result
             embed.title = f'Found {result_total} equation(s)!'
-            embed.description = f'Showing **{len(eqs)}** of **{result_total}** equations\n'
+            embed.description = f'Showing result {offset+1} - {((offset//1)+1)*10} of **{result_total}** equations\n'
             embed.description += '\n'.join(f'{i}. {eq}\n' for i, eq in enumerate(eqs, 1))
-            embed.description += '** . . . **\n**Due to major API limitation, Kaitoon can only show, at most, 10 reactions.'
             embed.add_field(name='Status', value='✅ Success', inline=False)
 
         embed.add_field(name='Input', value=inputs, inline=False)
