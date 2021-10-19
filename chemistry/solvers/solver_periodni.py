@@ -195,7 +195,7 @@ class _OxidationNumberAssignment(Periodni):
         for compound, uni, res in zip(compounds, result_unicodes, results):
             if res:
                 res = '\n'.join(res)
-                f_value = f'Unicode: ||```{uni}```||\n```{res}```'
+                f_value = f'Unicode: ||```{uni}```||```{res}```'
             else:
                 f_value = '😐 Something went wrong.'
             embed.add_field(

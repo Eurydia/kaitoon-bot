@@ -33,7 +33,7 @@ class ChemistryCogs(Cog):
     async def cog_command_error(self, ctx: Context, error: Exception) -> None:
         message: Message = ctx.message
         await message.remove_reaction('⌛', self.bot.user)
-        await message.add_reaction('👌', self.bot.user)
+        await message.remove_reaction('👌', self.bot.user)
         await message.add_reaction('⚠')
         await ctx.send(f'> {ctx.message.content}\n{error}')
     
