@@ -283,6 +283,7 @@ class HelpCommand(ChemistryCogs):
             value=f'{timer_end-timer_start:.2f}s',
             inline=False
             )
+        await ctx.message.add_reaction('🎉')
         await ctx.send(embed=embed)
 
 def setup(bot):
