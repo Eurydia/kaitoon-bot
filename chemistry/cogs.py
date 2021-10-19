@@ -1,4 +1,6 @@
 from typing import Dict, Tuple
+from random import randint
+from timeit import default_timer
 
 from discord import Message, Embed, Colour
 from discord.ext.commands import Cog, Bot, command, Context
@@ -17,8 +19,8 @@ class ChemistryCogs(Cog):
 
     def __init_subclass__(cls) -> None:
         info = cls.commands_info()
+        _COGS.append(cls)
         if info:
-            _COGS.append(cls)
             for key in info.keys():
                 if key not in _CHEMISTRY_COMMANDS:
                     _CHEMISTRY_COMMANDS[key] = info[key]
@@ -31,6 +33,7 @@ class ChemistryCogs(Cog):
     async def cog_command_error(self, ctx: Context, error: Exception) -> None:
         message: Message = ctx.message
         await message.remove_reaction('⌛', self.bot.user)
+        await message.add_reaction('👌', self.bot.user)
         await message.add_reaction('⚠')
         await ctx.send(f'> {ctx.message.content}\n{error}')
     
@@ -87,7 +90,7 @@ class SimpleBalance(ChemistryCogs):
                 Both argument should be inside of `\"\"` and seperated by a space.
                 Valid seperators for the reactants and products are `,` `+` and ` `(space).
                 Example: 
-                ```balance "Ca3(PO4)2 H2SO4" "H3PO4, CaSO4 + H2O"```'''
+                ```balance "Ca3(PO4)2 H2SO4" "H3PO4, CaSO4"```'''
             },
             'balancemany': {
                 'alias': ('balmany', 'balm'),
@@ -99,7 +102,7 @@ class SimpleBalance(ChemistryCogs):
                 Valid seperators for the reactants and products are `,` `+` and ` `(space).
                 Reactants and products should be seperated by an `=`.
                 Example:
-                ```balancemany "Ca3(PO4)2 H2SO4 = H3PO4, CaSO4 + H2O" "SiCl4 + H2O=SiO2 + HCl"```
+                ```balancemany "Ca3(PO4)2 H2SO4 = H3PO4, CaSO4" "SiCl4 + H2O=SiO2 + HCl"```
                 '''
             }
         }
@@ -198,12 +201,7 @@ class HelpCommand(ChemistryCogs):
 
     @staticmethod
     def commands_info() -> Dict[str, Dict[str, str]]:
-        return {
-            'help': {
-                'alias': tuple(),
-                'syntax': 'help `command name`'
-            }
-        }
+        return {}
 
     @staticmethod
     def _help_embed() -> Embed:
@@ -238,8 +236,6 @@ class HelpCommand(ChemistryCogs):
     async def _help(self, ctx: Context, cmd_name: str=None) -> None:
         if not cmd_name:
             await ctx.send(embed=self._help_embed())
-        elif cmd_name == 'help':
-            return
         elif cmd_name in _CHEMISTRY_COMMANDS:
             info_dict = _CHEMISTRY_COMMANDS[cmd_name]
             embed = self._command_embed(
@@ -249,8 +245,45 @@ class HelpCommand(ChemistryCogs):
                 info_dict.get('description', '')
                 )
             await ctx.send(embed=embed)
+        elif cmd_name == 'help':
+            raise NotImplemented()
         else:
             raise ValueError("Unknown command name")
+
+    @command(name='cake')
+    async def bake_a_cake(self, ctx: Context) -> None:
+        timer_start = default_timer()
+        embed = Embed(
+            title='Balanced 🍰 of 🍰 Reaction(s).',
+            color=Colour.from_rgb(255,119,188)
+        )
+        embed.add_field(
+            name=f'{randint(1, 8)}🌾 + {randint(2, 6)}🥚 + {randint(2, 10)}🍫 = {randint(2,4)}🎂',
+            value='Orignal: ```Cake```',
+            inline=False
+            )
+        embed.add_field(
+            name='Status',
+            value=f'✅ Success (100.0%)',
+            inline=False
+            )
+        embed.add_field(
+            name='Inputs',
+            value='" **cake** "',
+            inline=False
+            )
+        embed.add_field(
+            name='Interpreted as',
+            value='" **🎂** "',
+            inline=False
+            )
+        timer_end = default_timer()
+        embed.add_field(
+            name='Finished in',
+            value=f'{timer_end-timer_start:.2f}s',
+            inline=False
+            )
+        await ctx.send(embed=embed)
 
 def setup(bot):
     for cog in _COGS:
