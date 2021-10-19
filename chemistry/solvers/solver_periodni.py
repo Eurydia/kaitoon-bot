@@ -264,7 +264,7 @@ class _SimpleBalance(Periodni):
         embed = Embed(title=f'Balanced {succeed} of {total_coumpound} Reaction(s).')
         for reaction, uni, res in zip(reactions, result_unicodes, results):
             reaction = reaction.replace("=", "=")
-            reaction = f'Original: ```{reaction}```'
+            reaction = f'Original: {reaction}'
             if res:
                 f_name = res
                 f_value = f'Unicode: ||```{uni}```||\n{reaction}'
@@ -355,7 +355,7 @@ class _RedoxBalance(Periodni):
         for reaction, uni, res in zip(reactions_with_median, result_unicodes, results):
             m, r = reaction
             r = r.replace('=', ' = ')
-            r = f'Original: ```{r}```'
+            r = f'Original: {r}'
             if res:
                 f_name = f'({m}) {res}'
                 f_value = f'Unicode: ||```{uni}```||\n{r}'
