@@ -1,11 +1,11 @@
 from discord import Message, Game
-from discord.ext import commands
+from discord.ext.commands import Cog, Bot
 
-class EventListener(commands.Cog):
-    def __init__(self, bot: commands.Bot) -> None:
+class EventListener(Cog):
+    def __init__(self, bot: Bot) -> None:
         self.bot = bot
     
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_ready(self):
         if self.bot.DEBUG:
             print(f'Bot ready {self.bot.user}.')
@@ -14,23 +14,25 @@ class EventListener(commands.Cog):
             activity=Game('#on | #bal | #re | #predict')
             )
 
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_disconnect(self):
         if self.bot.DEBUG:
             print(f'Bot disconnect from Discord.')
     
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_error(self, event, *args, **kwargs):
         if  self.bot.DEBUG:
             pass
 
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_message(self, message: Message):
         if message.author == self.bot.user:
             return
 
         if self.bot.DEBUG:
             pass
+    
+    
 
 def setup(bot):
     bot.add_cog(EventListener(bot))
