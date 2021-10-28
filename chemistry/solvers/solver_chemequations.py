@@ -52,7 +52,7 @@ class _ReactionPrediction(ChemEquation):
     @staticmethod
     def _prepare_page_source(base_url: str, query: str) -> str:
             session = FuturesSession()
-            rqs = (session.get(f'{base_url}{query}'))
+            rqs = (session.get(f'{base_url}{query}'), )
             content = ''
             for req in as_completed(rqs):
                 resp = req.result()
