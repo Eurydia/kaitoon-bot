@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from abc import ABC, abstractmethod, abstractstaticmethod
+from abc import ABC, abstractmethod
 
 from discord import Embed
 
@@ -9,22 +9,14 @@ class ChemistrySolverBaseClass(ABC):
     def solve(self) -> Embed:
         pass
 
-    @abstractstaticmethod
-    def _prepare_page_source():
-        pass
-
     @abstractmethod
     def _format_page_source(self):
         pass
 
-    @abstractstaticmethod
-    def _prepare_query():
-        pass
 
-    @abstractstaticmethod
-    def _prepare_result():
-        pass
+class Periodni(ChemistrySolverBaseClass):
+    pass
 
-    @abstractmethod
-    def _prepare_embed(self) -> Embed:
-        pass
+
+class ChemEquation(ChemistrySolverBaseClass):
+    pass

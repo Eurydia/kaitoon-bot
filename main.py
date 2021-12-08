@@ -8,7 +8,7 @@ def main():
     # TODO: DEBUG mode
     # TODO: Combining equations
 
-    bot = Kaitoon("#")
+    bot = Kaitoon()
     bot.run(getenv("TOKEN"))
 
 

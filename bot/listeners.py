@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from discord import Message, Game
+from discord import Game
 from discord.ext.commands import Cog, Bot
 
 
@@ -11,8 +11,9 @@ class EventListener(Cog):
     async def on_ready(self):
         if self.bot.DEBUG:
             print(f"Bot ready {self.bot.user}.")
-
-        await self.bot.change_presence(activity=Game("#on | #bal | #re | #predict"))
+        await self.bot.change_presence(
+            activity=Game("#on | #balance | #redox | #predict")
+        )
 
     @Cog.listener()
     async def on_disconnect(self):
@@ -22,15 +23,20 @@ class EventListener(Cog):
     @Cog.listener()
     async def on_error(self, event, *args, **kwargs):
         if self.bot.DEBUG:
-            pass
+            report = f"""\
+event={event}
+args={", ".join(args)},
+kwargs={kwargs}\
+"""
+            print(report)
 
-    @Cog.listener()
-    async def on_message(self, message: Message):
-        if message.author == self.bot.user:
-            return
+    # @Cog.listener()
+    # async def on_message(self, message: Message):
+    #     if message.author == self.bot.user:
+    #         return
 
-        if self.bot.DEBUG:
-            pass
+    #     if self.bot.DEBUG:
+    #         pass
 
 
 def setup(bot):
