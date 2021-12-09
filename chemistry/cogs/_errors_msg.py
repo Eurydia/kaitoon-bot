@@ -7,14 +7,19 @@ NO_SPACE_BETWEEB_ARGS_MSG = """\
 Please leave one empty space between each argument.
 Like this ⬇
 ```
-]]balance "A + B + C"🟦"X + Y + Z"
-(replace "🟦" with space.)
-```\
+]]command🧊"[<argument 1>]"🧊"[<argument 2>]"🧊"[<argument 3>]"
+```
+Where
+`🧊`: one empty space.\
 """
 
 UNCLOSED_ARGUMENT_MSG = """\
-It seems like one of the argument was not properly closed with '\"'.
-Please check you input again.\
+It seems like one of the argument was not properly closed.
+Arguments should be open and closed with \" \" \" symbol.
+Like this ⬇
+```
+]]command **"**[<argument 1>]**"** **"**[<argument 2>]**"** **"**[<argument 3>]**"**
+```\
 """
 
 NO_ARGUMENT_GIVEN_MSG = """\
@@ -23,13 +28,14 @@ No argument is given with your command call.\
 
 NO_ARROW_SEP_FOUND_MSG = """\
 I'm unable to distinguish reactants and products.
-Please use \" = \" symbol to seperate reactants
-and products apart.
+Reactants and products should be seperated
+with \" = \" symbol.
 Like this ⬇
 ```
-]]redox "A + B + C🟦=🟦X + Y + Z"
-(replace "🟦" with space.)
-```\
+]]command "[<reactants>]🧊=🧊[<products>]"
+```
+Where
+`🧊`: one empty space.\
 """
 
 INCORRECT_MEDIAN_MSG = """\
@@ -44,9 +50,7 @@ It seems like one of your input is unspecifed.
 Please use \"[u]\" instead for unspecified input.
 Like this ⬇
 ```
-]]predict "A + B + C"🟦"[u]"
-]]predict "A + B + C🟦=🟦[u]"
-(replace "🟦" with space.)
+]]predict "[<reactants>]" "[u]"
 ```\
 """
 
